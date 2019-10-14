@@ -86,6 +86,15 @@ class MessageTest < Minitest::Test
   def test_variable_length_packer_must_be_the_last
     mc = Class.new(SecretParameter::Message)
     mc.add_packer SecretParameter::StringPacker.new('string0', 4, 4)
+    mc.add_packer SecretParameter::StringPacker.new('string1', 4, 6)
+    exc = assert_raises do
+      mc.add_packer SecretParameter::StringPacker.new('string2', 4)
+    end
+    assert_equal("Can't add after a variable length packer", exc.message)
+  end
+  def test_unbouded_length_packer_must_be_the_last
+    mc = Class.new(SecretParameter::Message)
+    mc.add_packer SecretParameter::StringPacker.new('string0', 4, 4)
     mc.add_packer SecretParameter::StringPacker.new('string1', 4)
     exc = assert_raises do
       mc.add_packer SecretParameter::StringPacker.new('string2', 4)

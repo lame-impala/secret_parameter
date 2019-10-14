@@ -28,7 +28,7 @@ class Message
   end
   def self.add_packer packer
     raise TypeError.new("Not a packer") unless packer.is_a? AbstractPacker
-    if self.max_bytes == StringPacker::INFINITY
+    if self.min_bytes < self.max_bytes
       raise MessageError.new("Can't add after a variable length packer")
     end
     @min_bytes = min_bytes + packer.min_bytes
