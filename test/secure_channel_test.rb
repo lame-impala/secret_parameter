@@ -7,8 +7,8 @@ class SecureChannelTest < Minitest::Test
    def get_channel factory
      ec = SecretParameter::Key.new('encryption_key', 'salt1')
      ac = SecretParameter::Key.new('authentication_key', 'salt2')
-     nc = SecretParameter::NonceFactoryBuilder.new.uint32.build
-     sc = SecretParameter::SecureChannel.new(ec, ac, factory, nc)
+     nf = SecretParameter::NonceFactoryBuilder.new.uint32.build
+     sc = SecretParameter::SecureChannel.new(ec, ac, factory, nf)
      return sc
    end
    def encryption_decryption_test channel, msg
@@ -29,18 +29,18 @@ class SecureChannelTest < Minitest::Test
       )
    end
    def test_mac_length_makes_difference
-       ec = SecretParameter::Key.new('ec1', 'salt1')
+      ec = SecretParameter::Key.new('ec1', 'salt1')
       ac = SecretParameter::Key.new('ac1', 'salt2')
-      nc = SecretParameter::NonceFactoryBuilder.new.uint32.build
-      sc = SecretParameter::SecureChannel.new(ec, ac, SignInMessage, nc)
+      nf = SecretParameter::NonceFactoryBuilder.new.uint32.build
+      sc = SecretParameter::SecureChannel.new(ec, ac, SignInMessage, nf)
       msg = SignInMessage.new(index: 50, email: 'eml')
       enc = sc.encrypt_and_tag(msg, sc.nonce_factory.new(2))      
       assert_equal(55, enc.length)
 
-       ec = SecretParameter::Key.new('ec1', 'salt1')
+      ec = SecretParameter::Key.new('ec1', 'salt1')
       ac = SecretParameter::Key.new('ac1', 'salt2')
-      nc = SecretParameter::NonceFactoryBuilder.new.uint32.build
-      sc = SecretParameter::SecureChannel.new(ec, ac, UnsubscribeMessage, nc)
+      nf = SecretParameter::NonceFactoryBuilder.new.uint32.build
+      sc = SecretParameter::SecureChannel.new(ec, ac, UnsubscribeMessage, nf)
       msg = UnsubscribeMessage.new(index: 50, service: 150)
       enc = sc.encrypt_and_tag(msg, sc.nonce_factory.new(2))  
       assert_equal(36, enc.length)
@@ -49,8 +49,8 @@ class SecureChannelTest < Minitest::Test
    def test_wrong_message_class_raises
        ec = SecretParameter::Key.new('ec1', 'salt1')
       ac = SecretParameter::Key.new('ac1', 'salt2')
-      nc = SecretParameter::NonceFactoryBuilder.new.uint32.build
-      sc = SecretParameter::SecureChannel.new(ec, ac, SignInMessage, nc)
+      nf = SecretParameter::NonceFactoryBuilder.new.uint32.build
+      sc = SecretParameter::SecureChannel.new(ec, ac, SignInMessage, nf)
       msg = UnsubscribeMessage.new(index: 50, service: 20)
       exc = assert_raises do
         enc = sc.encrypt_and_tag(msg, sc.nonce_factory.new(2))      
@@ -60,8 +60,8 @@ class SecureChannelTest < Minitest::Test
    def test_wrong_nonce_class_raises
        ec = SecretParameter::Key.new('ec1', 'salt1')
       ac = SecretParameter::Key.new('ac1', 'salt2')
-      nc = SecretParameter::NonceFactoryBuilder.new.uint32.build
-      sc = SecretParameter::SecureChannel.new(ec, ac, SignInMessage, nc)
+      nf = SecretParameter::NonceFactoryBuilder.new.uint32.build
+      sc = SecretParameter::SecureChannel.new(ec, ac, SignInMessage, nf)
       msg = SignInMessage.new(index: 50, email: "eml")
       other_nonce_factory = SecretParameter::NonceFactoryBuilder.new.uint32.build
       exc = assert_raises do
@@ -76,12 +76,12 @@ class SecureChannelTest < Minitest::Test
    def test_auth_key_makes_difference
       ec = SecretParameter::Key.new('ec1', 'salt1')
       ac = SecretParameter::Key.new('ac1', 'salt2')
-      nc = SecretParameter::NonceFactoryBuilder.new.uint32.build
-      sc = SecretParameter::SecureChannel.new(ec, ac, SignInMessage, nc)
+      nf = SecretParameter::NonceFactoryBuilder.new.uint32.build
+      sc = SecretParameter::SecureChannel.new(ec, ac, SignInMessage, nf)
       msg = SignInMessage.new(index: 20, email: "msg")
       enc = sc.encrypt_and_tag(msg, sc.nonce_factory.new(1))
       ac = SecretParameter::Key.new('ac2', 'salt2')
-      sc = SecretParameter::SecureChannel.new(ec, ac, SignInMessage, nc)
+      sc = SecretParameter::SecureChannel.new(ec, ac, SignInMessage, nf)
 
       exc = assert_raises do
         sc.authenticate_and_decrypt(enc)
@@ -95,13 +95,13 @@ class SecureChannelTest < Minitest::Test
    def test_auth_salt_makes_difference
       ec = SecretParameter::Key.new('ec1', 'salt1')
       ac = SecretParameter::Key.new('ac1', 'salt2')
-      nc = SecretParameter::NonceFactoryBuilder.new.uint32.build
-      sc = SecretParameter::SecureChannel.new(ec, ac, SignInMessage, nc)
+      nf = SecretParameter::NonceFactoryBuilder.new.uint32.build
+      sc = SecretParameter::SecureChannel.new(ec, ac, SignInMessage, nf)
       msg = SignInMessage.new(index: 50, email: "msg")
       enc = sc.encrypt_and_tag(msg, sc.nonce_factory.new(2))
       
       ac = SecretParameter::Key.new('ac1', 'salt3')
-      sc = SecretParameter::SecureChannel.new(ec, ac, SignInMessage, nc)
+      sc = SecretParameter::SecureChannel.new(ec, ac, SignInMessage, nf)
 
       exc = assert_raises do
         sc.authenticate_and_decrypt(enc)
@@ -111,5 +111,25 @@ class SecureChannelTest < Minitest::Test
         exp,
         exc.message[0, exp.length]
       )
+   end
+   def test_empty_message_fails
+      ec = SecretParameter::Key.new('ec1', 'salt1')
+      ac = SecretParameter::Key.new('ac1', 'salt2')
+      nc = SecretParameter::NonceFactoryBuilder.new.uint32.build
+      mf = SecretParameter.message_factory_builder.build
+      sc = SecretParameter::SecureChannel.new(ec, ac, mf, nc)
+      msg = mf.new
+      exc = assert_raises do
+        enc = sc.encrypt_and_tag(msg, sc.nonce_factory.new(2))
+      end
+      assert_equal("data must not be empty", exc.message)
+   end
+   def test_empty_nonce_fails
+      ec = SecretParameter::Key.new('ec1', 'salt1')
+      ac = SecretParameter::Key.new('ac1', 'salt2')
+      exc = assert_raises do
+        nc = SecretParameter::NonceFactoryBuilder.new.build
+      end
+      assert_equal("Nonce must not be empty", exc.message)
    end
 end

@@ -1,4 +1,5 @@
 require_relative 'nonce'
+require_relative 'error'
 
 module SecretParameter
 
@@ -27,6 +28,7 @@ class NonceFactoryBuilder
     self
   end
   def build
+    raise NonceError.new("Nonce must not be empty") unless @class.packers.length > 0
     @class
   end
   private
