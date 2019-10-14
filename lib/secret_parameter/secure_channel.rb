@@ -18,7 +18,7 @@ class SecureChannel
     iv = nonce.iv
     plain = message.pack
     cipher = encrypt(plain, iv)
-    tag = calculate_mac(cipher)
+    tag = calculate_mac(iv + cipher)
     return iv + cipher + tag
   end
   
@@ -35,7 +35,7 @@ class SecureChannel
     if ciphertext.nil? || ciphertext.length < message_factory.min_bytes
       raise DecryptionError.new("Ciphertext too short: '#{hex(ciphertext)}'")
     end
-    expected = calculate_mac(ciphertext)
+    expected = calculate_mac(iv + ciphertext)
     if expected != mac
       raise AuthenticationError.new("Authentication failed: #{hex(mac)} != #{hex(expected)}")      
     end
