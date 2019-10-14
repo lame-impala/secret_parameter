@@ -33,6 +33,7 @@ class MessageFactoryBuilder
     self
   end
   def build
+    raise NonceError.new("Message must not be empty") unless @class.packers.length > 0
     @class
   end
 end

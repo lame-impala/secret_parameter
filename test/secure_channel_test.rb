@@ -116,7 +116,11 @@ class SecureChannelTest < Minitest::Test
       ec = SecretParameter::Key.new('ec1', 'salt1')
       ac = SecretParameter::Key.new('ac1', 'salt2')
       nc = SecretParameter::NonceFactoryBuilder.new.uint32.build
-      mf = SecretParameter.message_factory_builder.build
+      exc = assert_raises do
+        SecretParameter.message_factory_builder.build
+      end
+      assert_equal("Message must not be empty", exc.message)
+      mf = Class.new(SecretParameter::Message)
       sc = SecretParameter::SecureChannel.new(ec, ac, mf, nc)
       msg = mf.new
       exc = assert_raises do
