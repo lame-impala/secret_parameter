@@ -1,0 +1,4 @@
+coverage/*
+.project
+*.gem
+.byebug_history
