@@ -45,7 +45,7 @@ sp = SecretParameter::create(
 ```
 Two key/salt pairs are needed here. They may be strings of arbitrary lengths for they are run through a key extension function with the salt mixed in in the process to obtain keys of required length. 
 
-With SecretParameter object in hand it's now possible to actually perform encryption and decryption. Encrypted message, along with the initialization vector, is authenticated using HMAC tag that is attached to it. In the end, the whole is converted to Base64 encoding:
+With SecretParameter object in hand it's now possible to actually perform encryption and decryption. Encrypted message, along with the initialization vector, is authenticated using an HMAC tag that is attached to it. In the end, the whole is converted to Base64 encoding:
 ```
 message = sp.create_message(protocol: 1, index: 642, token: "abcd", email: "email@example.com")
 nonce = sp.create_nonce(35781)
@@ -60,7 +60,7 @@ message_factory = SecretParameter.message_factory_builder.new
   .mac_length(16)
   .build
 ```
-Naturally, HMAC truncated this way provides less security than full length one and should be used judiciously.
+Naturally, an HMAC tag truncated this way provides less security than full length one and should be used judiciously.
 
 #### License
 This project is licensed under the terms of the MIT license.
