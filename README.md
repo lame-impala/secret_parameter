@@ -7,15 +7,13 @@ Message folows a predefined template that is composed from numbers and strings. 
 message_factory = SecretParameter.message_factory_builder.new
   .uint8(:protocol)
   .uint64(:index)
-  .string(:token, min_bytes: 8, max_bytes: 8)
+  .string(:token, min_bytes: 4, max_bytes: 4)
   .string(:email)
   .build
 message = message_factory.new protocol: 1, index: 642, token: 'abcd', email: 'email@example.com'
 ```
-This piece of code creates a factory producing messages composed of 8 bit and 64 bit number, a fixed length string and a variable length string. A message instance is then constructed. The instance has reader methods on it for all defined fields, so its possible to query them directly:
-
-`message.email`
-
+This piece of code creates a factory producing messages composed of 8 bit and 64 bit number, a fixed length string and a variable length string. A message instance is then constructed. The instance has reader methods on it for all defined fields, so its possible to query them directly: 
+`email = message.email`
 This is the reason why names of elementary Object methods (eg. :method and :send) are reserved and can't be used
 
 
@@ -26,7 +24,6 @@ Encryption algorithm used is AES-256 in CRT mode. The advantage of streaming mod
 #### Nonce
 Since the library itself has no means of producing series of nonces reliably, it is a responsibility of the client code to provide such numbers. If the system is stateless or no reliable persistent counter can be set up, system time may be an acceptable source of nonces in most cases. Since time is typically a 64 bit integer and the initialization vector is required to be 16 bytes long, such nonce would be extended by a series of 8 random bites, which makes it highly improbable that an instance of initialization vector will be repeated. 
 Nonce template is created in a similar manner as the message template. The following code creates a nonce template composed of two 32 bit numbers, then creates an instance of such nonce and produces a 16 bytes long initialization vector, where the last 8 bytes are random: 
-
 ```
 nonce_factory = SecretParameter::nonce_factory_builder
   .uint32
@@ -38,7 +35,6 @@ iv = nonce.iv
 
 #### Secret parameter
 After having defined a message factory and nonce factory, an instance of SecreteParameter can be created:
-
 ```
 sp = SecretParameter::create(
   message_factory: mf, 
@@ -49,11 +45,11 @@ sp = SecretParameter::create(
   auth_salt: 'authentication salt'
 )
 ```
-Two key/salt pairs are needed here. They may be strings of arbitrary lengths for they are run through a key extension function (with the salt mixed in in the process) to obtain keys of required length. 
+Two key/salt pairs are needed here. They may be strings of arbitrary lengths for they are run through a key extension function with the salt mixed in in the process to obtain keys of required length. 
 
-With SecretParameter object in hand its possible to actually encrypt and decrypt messages. Encrypted message, along with the initialization vector, is authenticated using HMAC tag that is attached to it. In the end, the whole is converted to Base64 encoding:
+With SecretParameter object in hand it's now possible to actually perform encryption and decryption. Encrypted message, along with the initialization vector, is authenticated using HMAC tag that is attached to it. In the end, the whole is converted to Base64 encoding:
 ```
-message = sp.create_message(protocol: 20, index: 10, token: "abcdefgh", email: "email@example.com")
+message = sp.create_message(protocol: 1, index: 642, token: "abcd", email: "email@example.com")
 nonce = sp.create_nonce(35781)
 cipher = sp.encrypt_tag_encode(message, nonce)
 decrypted = sp.decode_authenticate_decrypt(cipher)
