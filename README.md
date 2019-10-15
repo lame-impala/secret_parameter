@@ -62,3 +62,5 @@ message_factory = SecretParameter.message_factory_builder.new
 ```
 Naturally, HMAC truncated this way provides less security than full length one and should be used judiciously.
 
+#### License
+This project is licensed under the terms of the MIT license.
