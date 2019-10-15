@@ -32,7 +32,7 @@ iv = nonce.iv
 ```
 
 #### Secret parameter
-After having defined a message factory and nonce factory, an instance of SecreteParameter can be created:
+After having defined a message factory and nonce factory, an instance of SecretParameter can be created:
 ```
 sp = SecretParameter::create(
   message_factory: mf, 
