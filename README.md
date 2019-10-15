@@ -2,7 +2,7 @@
 ### Ruby module for encrypting and decrypting query parameters
 
 #### Message
-Message folows a predefined template that is composed from numbers and strings. Strings must have fixed length, only the last part can be a variable length string. Unsigned numbers of various byte widths are accepted, signed numbers do not seem terribly useful for common use cases so they're not an option. A message template is defined like so:
+Message follows a predefined template that is composed from numbers and strings. Strings must have fixed length, only the last part can be a variable length string. Unsigned numbers of various byte widths are accepted, signed numbers do not seem terribly useful for common use cases so they're not an option. A message template is defined like so:
 ```
 message_factory = SecretParameter.message_factory_builder.new
   .uint8(:protocol)
