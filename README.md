@@ -53,7 +53,7 @@ cipher = sp.encrypt_tag_encode(message, nonce)
 decrypted = sp.decode_authenticate_decrypt(cipher)
 assert_equal(message, decrypted)
 ```
-Authentication tag is by default 32 bytes long. In some cases this may make the message too long and unwieldy, so there's a possibility to truncate the tag down. This is done when defining the message factory: 
+Authentication tag is by default 32 bytes long. In some cases this may make the message too long and unwieldy, so there's a possibility to truncate the tag down to certain size. This is done when defining the message factory: 
 ```
 message_factory = SecretParameter.message_factory_builder.new
   .uint64(:index)
