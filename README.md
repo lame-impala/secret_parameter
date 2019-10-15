@@ -12,9 +12,7 @@ message_factory = SecretParameter.message_factory_builder.new
   .build
 message = message_factory.new protocol: 1, index: 642, token: 'abcd', email: 'email@example.com'
 ```
-This piece of code creates a factory producing messages composed of 8 bit and 64 bit number, a fixed length string and a variable length string. A message instance is then constructed. The instance has reader methods on it for all defined fields, so its possible to query them directly: 
-`email = message.email`
-This is the reason why names of elementary Object methods (eg. :method and :send) are reserved and can't be used
+This piece of code creates a factory producing messages composed of 8 bit and 64 bit number, a fixed length string and a variable length string. A message instance is then constructed. The instance has reader methods on it for all defined fields, so its possible to query them directly: `email = message.email` (this is the reason why names of elementary Object methods (eg. :method and :send) are reserved and can't be used.)
 
 
 #### Algorithm
