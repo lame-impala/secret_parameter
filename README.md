@@ -39,8 +39,8 @@ sp = SecretParameter::create(
   nonce_factory: nf,
   cipher_key: "cipher key", 
   cipher_salt: "cipher salt", 
-  auth_key: 'authentication key', 
-  auth_salt: 'authentication salt'
+  auth_key: "authentication key", 
+  auth_salt: "authentication salt"
 )
 ```
 Two key/salt pairs are needed here. They may be strings of arbitrary lengths for they are run through a key extension function with the salt mixed in in the process to obtain keys of required length. 
