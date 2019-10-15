@@ -4,7 +4,7 @@
 #### Message
 Message follows a predefined template that is composed from numbers and strings. Strings must have fixed length, only the last part can be a variable length string. Unsigned numbers of various byte widths are accepted, signed numbers do not seem terribly useful for common use cases so they're not an option. A message template is defined like so:
 ```
-message_factory = SecretParameter.message_factory_builder.new
+message_factory = SecretParameter.message_factory_builder
   .uint8(:protocol)
   .uint64(:index)
   .string(:token, min_bytes: 4, max_bytes: 4)
