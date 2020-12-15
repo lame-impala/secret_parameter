@@ -3,7 +3,7 @@
 
 #### Message
 Message follows a predefined template that is composed from numbers and strings. Strings must have fixed length, only the last part can be a variable length string. Unsigned numbers of various byte widths are accepted, signed numbers do not seem terribly useful for common use cases so they're not an option. A message template is defined like so:
-```
+```ruby
 message_factory = SecretParameter.message_factory_builder
   .uint8(:protocol)
   .uint64(:index)
@@ -12,7 +12,7 @@ message_factory = SecretParameter.message_factory_builder
   .build
 message = message_factory.new protocol: 1, index: 642, token: 'abcd', email: 'email@example.com'
 ```
-This piece of code creates a factory producing messages composed of 8 bit and 64 bit number, a fixed length string and a variable length string. A message instance is then constructed. The instance has reader methods on it for all defined fields, so its possible to query them directly: `email = message.email` (this is the reason why names of elementary Object methods like `:method` and `:send` are reserved and can't be used.)
+This piece of code creates a factory producing messages composed of 8 bit and 64 bit number, a fixed length string and a variable length string. A message instance is then constructed. The instance has reader methods on it for all defined fields, so it is possible to query them directly: `email = message.email` (this is the reason why names of elementary Object methods like `:method` and `:send` are reserved and can't be used.)
 
 
 #### Algorithm
@@ -22,7 +22,7 @@ Encryption algorithm used is AES-256 in CRT mode. The advantage of streaming mod
 #### Nonce
 Since the library itself has no means of producing series of nonces reliably, it is a responsibility of the client code to provide such numbers. If the system is stateless or no reliable persistent counter can be set up, system time may be an acceptable source of nonces in most cases. Since time is typically a 64 bit integer and the initialization vector is required to be 16 bytes long, such nonce would be extended by a series of 8 random bytes, which makes it highly improbable that an instance of initialization vector will be repeated. 
 Nonce template is created in a similar manner as the message template. The following code creates a nonce template composed of two 32 bit numbers, then creates an instance of such nonce and produces a 16 bytes long initialization vector, where the last 8 bytes are random: 
-```
+```ruby
 nonce_factory = SecretParameter::nonce_factory_builder
   .uint32
   .uint32
@@ -33,7 +33,7 @@ iv = nonce.iv
 
 #### Secret parameter
 After having defined a message factory and nonce factory, an instance of SecretParameter can be created:
-```
+```ruby
 sp = SecretParameter::create(
   message_factory: mf, 
   nonce_factory: nf,
@@ -46,7 +46,7 @@ sp = SecretParameter::create(
 Two key/salt pairs are needed here. They may be strings of arbitrary lengths for they are run through a key extension function with the salt mixed in in the process to obtain keys of required length. 
 
 With SecretParameter object in hand it's now possible to actually perform encryption and decryption. Encrypted message, along with the initialization vector, is authenticated using an HMAC tag that is attached to it. In the end, the whole is converted to Base64 encoding:
-```
+```ruby
 message = sp.create_message(protocol: 1, index: 642, token: "abcd", email: "email@example.com")
 nonce = sp.create_nonce(35781)
 cipher = sp.encrypt_tag_encode(message, nonce)
@@ -54,7 +54,7 @@ decrypted = sp.decode_authenticate_decrypt(cipher)
 assert_equal(message, decrypted)
 ```
 Authentication tag is by default 32 bytes long. In some cases this may make the message too long and unwieldy, so there's a possibility to truncate the tag down to certain size. This is done when defining the message factory: 
-```
+```ruby
 message_factory = SecretParameter.message_factory_builder.new
   .uint64(:index)
   .mac_length(16)
