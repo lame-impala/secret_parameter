@@ -1,7 +1,7 @@
 require 'simplecov'
 SimpleCov.root "#{Dir.getwd}/.."
 SimpleCov.start do
-    add_filter %r{^/test/}
+  add_filter %r{^/test/}
 end
 
 # require_relative 'abstract_message_test'

@@ -1,5 +1,5 @@
 require 'minitest/autorun.rb'
-require '../lib/secret_parameter/nonce_factory_builder.rb'
+require_relative '../lib/secret_parameter/nonce_factory_builder.rb'
 
 class NonceFactoryBuilderTest < Minitest::Test
   def test_nonce_building

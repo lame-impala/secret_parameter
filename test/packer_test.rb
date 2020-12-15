@@ -1,6 +1,6 @@
 require 'minitest/autorun.rb'
-require '../lib/secret_parameter/packer.rb'
-require './test_helper.rb'
+require_relative '../lib/secret_parameter/packer.rb'
+require_relative './test_helper.rb'
 
 class Uint8Test < Minitest::Test
   def test_uint8_accessors_work
@@ -160,7 +160,7 @@ class StringTest < Minitest::Test
       string.unpack('abcde')
     end
   end
-    
+
   def test_bounded_string_checks_limits_correctly
     string = SecretParameter::StringPacker.new('bounded_string', 2, 4)
     assert_equal(2, string.min_bytes)
@@ -169,19 +169,21 @@ class StringTest < Minitest::Test
     assert_equal('bounded_string', string.name)
     assert_equal('ab', string.unpack(string.pack('ab')))
     assert_equal('abcd', string.unpack(string.pack('abcd')))
-    assert_raises do 
+
+    assert_raises(SecretParameter::PackerError) do
       string.pack('a')
     end
-    assert_raises do
+    assert_raises(SecretParameter::PackerError) do
       string.unpack('a')
     end
-    assert_raises do 
+    assert_raises(SecretParameter::PackerError) do
       string.pack('abcde')
     end
-    assert_raises do
+    assert_raises(SecretParameter::PackerError) do
       string.unpack('abcde')
     end
   end
+
   def test_tightly_bounded_string_yields_num_bytes
     string = SecretParameter::StringPacker.new('bounded_string', 4, 4)
     assert_equal(4, string.min_bytes)

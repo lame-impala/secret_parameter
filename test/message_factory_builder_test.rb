@@ -1,15 +1,15 @@
 require 'minitest/autorun.rb'
-require '../lib/secret_parameter/message_factory_builder.rb'
+require_relative '../lib/secret_parameter/message_factory_builder.rb'
 
 class MessageFactoryBuilderTest < Minitest::Test 
   def test_message_building 
     factory = SecretParameter::MessageFactoryBuilder
       .new
-      .uint8("first")
-      .uint16("second")
-      .uint32("third")
-      .string("bounded", min_bytes: 4, max_bytes: 4)
-      .string("unbounded")
+      .uint8('first')
+      .uint16('second')
+      .uint32('third')
+      .string('bounded', min_bytes: 4, max_bytes: 4)
+      .string('unbounded')
       .mac_length(8)
       .build
     assert_equal(5, factory.packers.length)

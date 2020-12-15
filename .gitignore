@@ -1,4 +1,8 @@
-coverage/*
 .project
-*.gem
 .byebug_history
+.ruby-version
+
+coverage/*
+.idea/*
+
+*.gem
