@@ -1,11 +1,15 @@
 module SecretParameter
-  class AuthenticationError < StandardError; end
+  class Error < RuntimeError; end
 
-  class DecryptionError < StandardError; end
+  class Base64Error < Error; end 
 
-  class MessageError < StandardError; end
+  class AuthenticationError < Error; end
 
-  class PackerError < StandardError; end
+  class DecryptionError < Error; end
 
-  class NonceError < StandardError; end
+  class MessageError < Error; end
+
+  class PackerError < Error; end
+
+  class NonceError < Error; end
 end

@@ -32,7 +32,11 @@ module SecretParameter
 
     def decode_authenticate_decrypt(encoded)
       padded = self.class.pad(encoded)
-      decoded = Base64.urlsafe_decode64(padded)
+      decoded = begin
+        Base64.urlsafe_decode64(padded)
+      rescue ArgumentError => e
+        raise Base64Error.new(e.message)
+      end
       channel.authenticate_and_decrypt(decoded)
     end
 

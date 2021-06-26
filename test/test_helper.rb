@@ -5,7 +5,6 @@ SignInMessage = SecretParameter::MessageFactoryBuilder.new
                                                       .uint32(:index)
                                                       .string(:email)
                                                       .build
-
 UnsubscribeMessage = SecretParameter::MessageFactoryBuilder.new
                                                            .uint64(:index)
                                                            .uint32(:service)
