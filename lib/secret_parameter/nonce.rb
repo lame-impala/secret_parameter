@@ -16,6 +16,12 @@ module SecretParameter
       @packers
     end
 
+    def self.freeze
+      byebug
+      @packers.freeze
+      super
+    end
+
     def initialize(*fields)
       check_fields fields
       @fields = fields.dup
@@ -41,6 +47,12 @@ module SecretParameter
         value = fields[index]
         packer.check_value value
       end
+    end
+
+    def [](index)
+      raise NonceError, "Index out of bounds: #{index}" if index.negative? || index >= @fields.length
+
+      @fields[index]
     end
 
     def pack

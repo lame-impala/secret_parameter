@@ -19,10 +19,6 @@ module SecretParameter
       @packers ||= []
     end
 
-    def initialize(**fields)
-      extract_fields fields
-    end
-
     def self.add_packer(packer)
       raise TypeError, 'Not a packer' unless packer.is_a? AbstractPacker
       if min_bytes < max_bytes
@@ -46,6 +42,18 @@ module SecretParameter
       define_method name do
         instance_variable_get "@#{name}"
       end
+    end
+
+    def self.freeze
+      min_bytes
+      max_bytes
+      mac_length
+      packers.freeze
+      super
+    end
+
+    def initialize(**fields)
+      extract_fields fields
     end
 
     def extract_fields(fields)

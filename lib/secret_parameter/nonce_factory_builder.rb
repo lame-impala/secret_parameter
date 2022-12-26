@@ -35,7 +35,7 @@ module SecretParameter
     def build
       raise NonceError, 'Nonce must not be empty' if @class.packers.empty?
 
-      @class
+      @class.freeze
     end
 
     private

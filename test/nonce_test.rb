@@ -20,30 +20,37 @@ class NonceTest < Minitest::Test
     assert_equal("Can't add packer, nonce too long", exc.message)
   end
 
-  def test_nonce_packing
+  def two_field_nonce
     nc = Class.new(SecretParameter::Nonce)
     nc.add_packer(SecretParameter::Uint8Packer.new('0'))
     nc.add_packer(SecretParameter::Uint16Packer.new('1'))
+    nc
+  end
+
+  def test_nonce_packing
+    nc = two_field_nonce
     nonce = nc.new(102, 105)
     packed = nonce.pack
     assert_equal(3, packed.length)
-    exc = assert_raises(SecretParameter::NonceError) do
-      nc.new(100)
-    end
+    exc = assert_raises(SecretParameter::NonceError) { nc.new(100) }
     assert_equal('Expected 2 parameters, got 1', exc.message)
-
-    exc = assert_raises(SecretParameter::PackerError) do
-      nc.new(256, 105)
-    end
+    exc = assert_raises(SecretParameter::PackerError) { nc.new(256, 105) }
     assert_equal('Expected integer below 256, got 256', exc.message)
   end
 
   def test_nonce_padding
-    nc = Class.new(SecretParameter::Nonce)
-    nc.add_packer(SecretParameter::Uint8Packer.new('0'))
-    nc.add_packer(SecretParameter::Uint16Packer.new('1'))
+    nc = two_field_nonce
     nonce = nc.new(102, 105)
     iv = nonce.iv
     assert_equal(16, iv.length)
+  end
+
+  def test_square_bracket_access
+    nc = two_field_nonce
+    nonce = nc.new(102, 105)
+    assert_equal 102, nonce[0]
+    assert_equal 105, nonce[1]
+    assert_raises(SecretParameter::NonceError) { nonce[-1] }
+    assert_raises(SecretParameter::NonceError) { nonce[2] }
   end
 end

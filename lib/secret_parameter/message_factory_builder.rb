@@ -42,7 +42,7 @@ module SecretParameter
     def build
       raise MessageError, 'Message must not be empty' if @class.packers.empty?
 
-      @class
+      @class.freeze
     end
   end
 end
