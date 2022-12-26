@@ -1,9 +1,5 @@
-require 'minitest/autorun.rb'
 require_relative '../lib/secret_parameter/secret_parameter.rb'
 require_relative './test_helper.rb'
-
-
-require 'byebug'
 
 class SecretParameterTest < Minitest::Test
   def secret_parameter_setup

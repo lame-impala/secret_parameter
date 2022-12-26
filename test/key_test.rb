@@ -1,4 +1,4 @@
-require 'minitest/autorun'
+require_relative 'test_helper'
 require_relative '../lib/secret_parameter/key'
 
 class KeyTest < Minitest::Test

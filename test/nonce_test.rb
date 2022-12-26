@@ -1,4 +1,4 @@
-require 'minitest/autorun.rb'
+require_relative 'test_helper'
 require_relative '../lib/secret_parameter/nonce.rb'
 
 class NonceTest < Minitest::Test

@@ -1,7 +1,5 @@
-require 'minitest/autorun.rb'
+require_relative 'test_classes'
 require_relative '../lib/secret_parameter/secure_channel.rb'
-require_relative '../lib/secret_parameter/nonce_factory_builder.rb'
-require_relative './test_helper.rb'
 
 class SecureChannelTest < Minitest::Test
   def get_channel factory
