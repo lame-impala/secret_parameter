@@ -17,7 +17,6 @@ module SecretParameter
     end
 
     def self.freeze
-      byebug
       @packers.freeze
       super
     end
